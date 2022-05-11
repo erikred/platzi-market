@@ -5,6 +5,7 @@ import com.platzi.market.domain.repository.ProductRepository;
 import com.platzi.market.persistence.crud.ProductoCrudRepository;
 import com.platzi.market.persistence.entity.Producto;
 import com.platzi.market.persistence.mapper.ProductMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,8 +14,10 @@ import java.util.Optional;
 //Es una buena práctica decorarla con una anotación pues es una clase que interactúa directamente con la base de datos.
 @Repository
 public class ProductoRepository implements ProductRepository {
+    @Autowired
     private ProductoCrudRepository productoCrudRepository;
     //Clase 23 Llamamos a product mapper
+    @Autowired
     private ProductMapper mapper;
 
     @Override
@@ -31,32 +34,24 @@ public class ProductoRepository implements ProductRepository {
 
     @Override
     public Optional<List<Product>> getScarceProducts(int quantity) {
-        return Optional.empty();
+        Optional<List<Producto>> productos = productoCrudRepository.findByCantidadStockLessThanAndEstado(quantity, true);
+        return productos.map(p -> mapper.toProducts(p)); //Interesante forma de usar .map con listas.
     }
 
     @Override
     public Optional<Product> getProduct(int productId) {
-        return Optional.empty();
+        Optional<Producto> producto = productoCrudRepository.findById(productId);
+        return producto.map(mapper::toProduct);  //Igual a esto... -> producto.map(producto1 -> mapper.toProduct(producto1));
     }
 
     @Override
     public Product save(Product product) {
-        return null;
+        Producto producto = mapper.toProducto(product);
+        return mapper.toProduct(productoCrudRepository.save(producto));
     }
 
-    public Optional<List<Producto>> getEscasos(int cantidad){
-        return productoCrudRepository.findByCantidadStockLessThanAndEstado(cantidad, true);
-    }
-
-    public Optional<Producto> getProducto(int idProducto){
-        return productoCrudRepository.findById(idProducto);
-    }
-
-    public Producto save(Producto producto){
-        return productoCrudRepository.save(producto);
-    }
-
-    public void delete(int idProducto){
-        productoCrudRepository.deleteById(idProducto);
+    @Override
+    public void delete(int productId){
+        productoCrudRepository.deleteById(productId);
     }
 }
