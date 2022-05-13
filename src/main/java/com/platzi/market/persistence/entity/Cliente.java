@@ -8,7 +8,7 @@ import java.util.List;
 public class Cliente {
 
     @Id
-    @Column(name = "id", length = 20)
+    @Column(name = "id_cliente", length = 20)
     private String idCliente;
 
     @Column(length = 40)
@@ -26,7 +26,7 @@ public class Cliente {
     private String correoElectronico;
 
     @OneToMany(mappedBy = "cliente")
-    private List<Compra> compras = new java.util.ArrayList<>();
+    private List<Compra> compras;
 
     public List<Compra> getCompras() {
         return compras;

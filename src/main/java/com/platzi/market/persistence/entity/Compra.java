@@ -1,6 +1,15 @@
 package com.platzi.market.persistence.entity;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,14 +35,18 @@ public class Compra {
     private String estado;
 
     @ManyToOne
-    @JoinColumn(name = "id", updatable = false)
+    @JoinColumn(name = "id_cliente", updatable = false, insertable = false)
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "compra")
-    private List<ComprasProducto> productos = new java.util.ArrayList<>();
+    @OneToMany(mappedBy = "compra", cascade = {CascadeType.ALL})
+    private List<ComprasProducto> productos;
 
     public List<ComprasProducto> getProductos() {
         return productos;
+    }
+
+    public void setProductos(List<ComprasProducto> productos) {
+        this.productos = productos;
     }
 
     public Cliente getCliente() {
@@ -90,5 +103,20 @@ public class Compra {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Compra{" +
+                "idCompra=" + idCompra +
+                ", idCliente='" + idCliente + '\'' +
+                ", fecha=" + fecha +
+                ", medioPago='" + medioPago + '\'' +
+                ", comentario='" + comentario + '\'' +
+                ", estado='" + estado + '\'' +
+                ", cliente=" + cliente +
+                ", productos=" + productos +
+                '}';
     }
 }
